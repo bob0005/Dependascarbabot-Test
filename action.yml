@@ -1,0 +1,48 @@
+name: "Dependascarbabot"
+description: "A GitHub Action to automatically update Scarb.lock in Cairo repositories"
+
+inputs:
+  github-token:
+    description: "GitHub token for authentication"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ inputs.github-token }}
+    - name: Set up Scarb
+      uses: software-mansion/setup-scarb@v1
+
+    - name: Update dependencies
+      run: scarb update
+      shell: bash
+
+    - name: Create or update the PR
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        if [ -n "$(git status --porcelain)" ]; then
+          COMMIT_HASH=$(git rev-parse HEAD)
+          BRANCH_NAME="update-scarb-lock-$COMMIT_HASH"
+          PR_URL=$(gh pr list --head "$BRANCH_NAME" --json url --jq '.[0].url')
+          if [ -n "$PR_URL" ]; then
+            echo "PR already exists"
+          else
+            git checkout -b $BRANCH_NAME
+            git add .
+            git commit -m "Update Scarb.lock"
+            git push -uf origin $BRANCH_NAME
+            DIFF=$(git diff HEAD~1)
+          
+            gh pr create \
+              --title "Update Scarb.lock" \
+              --body $'This PR updates Scarb.lock from dependencies specified in Scarb.toml.\n\n**Diff:**\n```'"$DIFF"$'\n```' \
+              --base main --head $BRANCH_NAME
+          fi
+        fi
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      shell: bash
