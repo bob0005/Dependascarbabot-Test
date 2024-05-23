@@ -1,17 +1,6 @@
 name: Dependascarbabot
 on:
-  # POSIX cron syntax
-  # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
-
-  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-  schedule:
-    - cron: "0 3 * * 1" # <=== Change this value
-   
   workflow_dispatch:
-  
-  push:
-    branches:
-      - 'main'
 
 jobs:
   dependascarbabot:
@@ -20,3 +9,4 @@ jobs:
       - uses: cwastche/dependascarbabot@v1
         with:
           github-token: ${{ secrets.PAT_TOKEN }}
+          scarb-version: 2.5.2
