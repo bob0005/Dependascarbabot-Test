@@ -1,0 +1,8 @@
+[package]
+name = "test_project"
+cairo-version = "2.5.0"
+version = "0.1.0"
+
+[dependencies]
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v0.5.0" }
+cubit = { git = "https://github.com/ponderingdemocritus/cubit" }

@@ -1,0 +1,22 @@
+name: Dependascarbabot
+on:
+  # POSIX cron syntax
+  # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
+
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    - cron: "0 3 * * 1" # <=== Change this value
+   
+  workflow_dispatch:
+  
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  dependascarbabot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cwastche/dependascarbabot@v1
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
