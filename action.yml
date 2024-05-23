@@ -5,6 +5,9 @@ inputs:
   github-token:
     description: "GitHub token for authentication"
     required: true
+  scarb-version:
+    description: "Version of scarb used to run 'scarb update'"
+    required: false
 
 runs:
   using: "composite"
@@ -15,6 +18,8 @@ runs:
         token: ${{ inputs.github-token }}
     - name: Set up Scarb
       uses: software-mansion/setup-scarb@v1
+      with:
+        version: ${{ inputs.scarb-version }}
 
     - name: Update dependencies
       run: scarb update
@@ -35,11 +40,10 @@ runs:
             git add .
             git commit -m "Update Scarb.lock"
             git push -uf origin $BRANCH_NAME
-            DIFF=$(git diff HEAD~1)
           
             gh pr create \
               --title "Update Scarb.lock" \
-              --body $'This PR updates Scarb.lock from dependencies specified in Scarb.toml.\n\n**Diff:**\n```'"$DIFF"$'\n```' \
+              --body $'This PR updates Scarb.lock from dependencies specified in Scarb.toml.' \
               --base main --head $BRANCH_NAME
           fi
         fi
