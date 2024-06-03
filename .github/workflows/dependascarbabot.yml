@@ -8,5 +8,6 @@ jobs:
     steps:
       - uses: cwastche/dependascarbabot@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fine-grained-token: ${{ secrets.FINE_GRAINED_TOKEN }}
+          # Or use github-app-token: ${{ secrets.GITHUB_APP_TOKEN }}
           scarb-version: 2.5.2
